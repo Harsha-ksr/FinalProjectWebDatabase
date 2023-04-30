@@ -26,45 +26,46 @@ const Destinations = [
     
 ];*/
 
-/*
-    Getting data from Mongo Db cluster
-*/
 let results;
+/*
+Getting data from Mongo Db cluster
+    */
 // This is the database URL for the Mongo DB Atlas Cluster spun on AWS Cloud.
 const uri = "mongodb+srv://harshamongodb:harsha123@mongocluster.sckbjyb.mongodb.net/?retryWrites=true&w=majority";
 // Create a Mongo DB client
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
 });
 
 // Create an async function that calls DB and gets the data from the Collection we defined in Mongo DB
 // Database Name: DestinationsDB
 // Collections Name: Destinations
 async function run() {
-  try {
-    // Connect the client to the server.
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    const database = await client.db("DestinationsDB");
-    const collection = database.collection("Destinations");
-    // Get the results from the collection.
-    results = await collection.find({}).limit(10).toArray();
-        
-    console.log(`Pinged your deployment. You successfully connected to MongoDB! Data from Mongo DB -- ${JSON.stringify(results)}`);
+    try {
+        // Connect the client to the server.
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        const database = await client.db("DestinationsDB");
+        const collection = database.collection("Destinations");
+        // Get the results from the collection.
+        results = await collection.find({}).limit(10).toArray();
 
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
+        console.log(`Pinged your deployment. You successfully connected to MongoDB! Data from Mongo DB -- ${JSON.stringify(results)}`);
+
+    } finally {
+        // Ensures that the client will close when you finish/error
+        await client.close();
+    }
 }
 run().catch(console.dir);
 
-const server = http.createServer(function(req, res) {
+const server = http.createServer(function (req, res) {
     if (req.url.includes('/api')) {
+        run().catch(console.dir);
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.writeHead(200, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify(results));
